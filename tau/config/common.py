@@ -7,8 +7,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 class Common(Configuration):
-    BASE_PORT = os.environ.get("TAU_PORT", 8000)
-    BASE_URL = f"http://localhost:{BASE_PORT}"
+    PUBLIC_URL = os.environ.get("PUBLIC_URL", "localhost")
+    PROTOCOL = os.environ.get("PROTOCOL", "http:")
+    BASE_PORT = int(os.environ.get("PORT", 8000))
+    BASE_URL = f"{PROTOCOL}//{PUBLIC_URL}"
+
+    if BASE_PORT not in [80, 443]:
+        BASE_URL = BASE_URL + f":{BASE_PORT}"
 
     IS_SERVER = len(sys.argv) > 1 and "shell" not in sys.argv
     DEV_SERVER = len(sys.argv) > 1 and sys.argv[1] == "runserver"
@@ -60,10 +65,10 @@ class Common(Configuration):
     REDIS_SERVER = os.environ.get('REDIS_SERVER', 'tau-redis')
 
     CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [(REDIS_SERVER, 6379)],
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                "hosts": [(REDIS_SERVER, 6379)],
             },
         },
     }
@@ -93,7 +98,7 @@ class Common(Configuration):
         DATABASES = {
             'default': {
                 'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': 'db/db.sqlite3',
+                'NAME': 'db/data/db.sqlite3',
                 'USER': '',
                 'PASSWORD': '',
                 'HOST': '',
