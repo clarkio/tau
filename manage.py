@@ -3,6 +3,7 @@
 import os
 import sys
 from django.core.management.commands.runserver import Command as runserver
+from django.conf import settings
 
 def main():
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tau.config")
@@ -10,6 +11,11 @@ def main():
     port = os.environ.get("TAU_PORT", 8000)
     runserver.default_port = port
     runserver.default_addr = "0.0.0.0"
+
+    port = os.environ.get("PORT", 8000)
+    addr = os.environ.get("INT_SERVER_ADDR", "0.0.0.0")
+    runserver.default_port = port
+    runserver.default_addr = addr
 
     try:
         from configurations.management import execute_from_command_line
