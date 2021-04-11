@@ -1,16 +1,16 @@
 let rewards = [];
-const port = window.location.port;
+const port = window.location.port ? ":" + window.location.port : "";
 const host = window.location.hostname;
 const protocol = window.location.protocol;
 const socketProtocol = protocol === 'https:' ? 'wss:' : 'ws:';
 
 // Once the window/scripts/etc. have all been loaded, set up our json and text websockets.
 window.onload = (event) => {
-    setupJsonWebsocket(`${socketProtocol}//${host}:${port}/ws/tau-status/`, handleStatusMessage)
-    setupJsonWebsocket(`${socketProtocol}//${host}:${port}/ws/twitch-events/`, handleEventMessage);
+    setupJsonWebsocket(`${socketProtocol}//${host}${port}/ws/tau-status/`, handleStatusMessage)
+    setupJsonWebsocket(`${socketProtocol}//${host}${port}/ws/twitch-events/`, handleEventMessage);
     const prModal = document.getElementById('testPointsRedemptionModal');
     prModal.addEventListener('shown.bs.modal', function () {
-        ajaxGet(`${protocol}//${host}:${port}/api/v1/channel-point-rewards/`).subscribe(resp => {
+        ajaxGet(`${protocol}//${host}${port}/api/v1/channel-point-rewards/`).subscribe(resp => {
             const data = resp.data;
             rewards = data;
             const select = document.getElementById('reward');
@@ -27,7 +27,7 @@ window.onload = (event) => {
     });
     const tokenModal = document.getElementById('tokenModal');
     tokenModal.addEventListener('shown.bs.modal', function () {
-        ajaxGet(`${protocol}//${host}:${port}/api/v1/tau-user-token/`).subscribe(resp => {
+        ajaxGet(`${protocol}//${host}${port}/api/v1/tau-user-token/`).subscribe(resp => {
             const token = resp.token;
             document.getElementById('token').value = token;
         });
