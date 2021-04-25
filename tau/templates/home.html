@@ -57,7 +57,7 @@ window.onload = (event) => {
     setupJsonWebsocket(`${socketProtocol}//${host}:${port}/ws/tau-status/`, handleStatusMessage)
     const prModal = document.getElementById('testPointsRedemptionModal');
     prModal.addEventListener('shown.bs.modal', function () {
-        ajaxGet(`${protocol}//${host}:${port}/api/v1/channel-point-rewards/`).subscribe(resp => {
+        ajaxGet(`${protocol}//${host}${port}/api/v1/channel-point-rewards/`).subscribe(resp => {
             const data = resp.data;
             rewards = data;
             const select = document.getElementById('reward');
