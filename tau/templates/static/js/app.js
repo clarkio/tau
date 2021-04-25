@@ -6,11 +6,11 @@ const socketProtocol = protocol === 'https:' ? 'wss:' : 'ws:';
 
 // Once the window/scripts/etc. have all been loaded, set up our json and text websockets.
 window.onload = (event) => {
-    setupJsonWebsocket(`${socketProtocol}//${host}:${port}/ws/twitch-events/`, handleEventMessage);
+    setupJsonWebsocket(`${socketProtocol}//${host}${port}/ws/twitch-events/`, handleEventMessage);
 
     const tokenModal = document.getElementById('tokenModal');
     tokenModal.addEventListener('shown.bs.modal', function () {
-        ajaxGet(`${protocol}//${host}:${port}/api/v1/tau-user-token/`).subscribe(resp => {
+        ajaxGet(`${protocol}//${host}${port}/api/v1/tau-user-token/`).subscribe(resp => {
             const token = resp.token;
             document.getElementById('token').value = token;
         });
@@ -176,14 +176,14 @@ const eventTemplate = (title, eventObj, replay = null) => {
 }
 
 const replayEvent = (id) => {
-    const sub = ajaxPost(`${protocol}//${host}:${port}/api/v1/twitch-events/${id}/replay/`, {}).subscribe(resp => {
+    const sub = ajaxPost(`${protocol}//${host}${port}/api/v1/twitch-events/${id}/replay/`, {}).subscribe(resp => {
         console.log(resp);
     })
 }
 
 const getUserId = (username_id, userid_id) => {
     const username = document.getElementById(username_id).value;
-    const sub = ajaxGet(`${protocol}//${host}:${port}/api/v1/twitch-user/?login=${username}`).subscribe(resp => {
+    const sub = ajaxGet(`${protocol}//${host}${port}/api/v1/twitch-user/?login=${username}`).subscribe(resp => {
         if (resp.data.length > 0) {
             document.getElementById(userid_id).value = resp.data[0].id
         }
