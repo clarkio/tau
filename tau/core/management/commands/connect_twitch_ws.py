@@ -1,5 +1,4 @@
 import time
-import os
 
 import requests
 
@@ -10,6 +9,7 @@ from constance import config
 
 from tau.twitchevents.wsclient import WebSocketClient  # pylint: disable=import-error
 from tau.core.apps import CoreConfig                   # pylint: disable=import-error
+from tau.streamers.utils import update_all_streamers   # pylint: disable=import-error
 
 class Command(BaseCommand):
     help = 'Connects server to twitch websocket API.'
@@ -34,7 +34,7 @@ class Command(BaseCommand):
             print('     [WebHook endpoints now available]\n')
 
             # Setup ngrok
-            if(settings.USE_NGROK):
+            if settings.USE_NGROK:
                 public_url = CoreConfig.setup_ngrok()
             else:
                 public_url = settings.BASE_URL
@@ -42,6 +42,12 @@ class Command(BaseCommand):
             print(f'Setting webhooks with base url: {public_url}.')
             CoreConfig.setup_webhooks(public_url)
             # Establish Websocket Connection
+
+            # Update active streamers
+            print('---- Updating streaming status of all streamers in DB ----')
+            update_all_streamers()
+            print('     [Done]\n')
+
             client = WebSocketClient()
             client.run()
         except:  # pylint: disable=bare-except
