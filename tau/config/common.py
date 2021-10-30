@@ -4,6 +4,7 @@ from os.path import join
 from distutils.util import strtobool
 from configurations import Configuration
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from datetime import datetime
 
 
 class Common(Configuration):  # pylint: disable=no-init
@@ -12,6 +13,7 @@ class Common(Configuration):  # pylint: disable=no-init
     BASE_PORT = int(os.environ.get("PORT", 8000))
     BASE_URL = f"{PROTOCOL}//{PUBLIC_URL}"
     BEHIND_PROXY = (os.environ.get("BEHIND_PROXY", "false").lower() == "true")
+    BASE_DIR = BASE_DIR
 
     if BASE_PORT not in [80, 443] and not BEHIND_PROXY:
         BASE_URL = BASE_URL + f":{BASE_PORT}"
@@ -26,6 +28,8 @@ class Common(Configuration):  # pylint: disable=no-init
         LOCAL_URL = f"http://localhost:{BASE_PORT}"
     else:
         LOCAL_URL = BASE_URL
+
+    DEBUG_TWITCH_CALLS = os.environ.get("DEBUG_TWITCH_CALLS", "False").lower() == "true"
 
     INSTALLED_APPS = (
         'django.contrib.admin',
@@ -50,6 +54,7 @@ class Common(Configuration):  # pylint: disable=no-init
         'tau.twitch.apps.TwitchConfig',
         'tau.twitchevents.apps.TwitcheventsConfig',
         'tau.streamers.apps.StreamersConfig',
+        'tau.dashboard.apps.DashboardConfig'
     )
 
     # https://docs.djangoproject.com/en/2.0/topics/http/middleware/
@@ -70,6 +75,7 @@ class Common(Configuration):  # pylint: disable=no-init
     SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
     WSGI_APPLICATION = 'tau.wsgi.application'
     ASGI_APPLICATION = 'tau.asgi.application'
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
     REDIS_ENDPOINT = os.environ.get('REDIS_ENDPOINT','redis:6379')
     REDIS_PW = os.environ.get('REDIS_PW','')
@@ -250,7 +256,7 @@ class Common(Configuration):  # pylint: disable=no-init
 
     # Django Rest Framework
     REST_FRAMEWORK = {
-        'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+        'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.CursorPagination',
         'PAGE_SIZE': int(os.getenv('DJANGO_PAGINATION_LIMIT', '10')),
         'DATETIME_FORMAT': '%Y-%m-%dT%H:%M:%S%z',
         'DEFAULT_RENDERER_CLASSES': (
@@ -261,21 +267,26 @@ class Common(Configuration):  # pylint: disable=no-init
             'rest_framework.permissions.IsAuthenticated',
         ],
         'DEFAULT_AUTHENTICATION_CLASSES': (
-            'rest_framework.authentication.SessionAuthentication',
             'rest_framework.authentication.TokenAuthentication',
+            'rest_framework.authentication.SessionAuthentication',
         )
     }
 
     CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 
     CONSTANCE_CONFIG = {
+        'PUBLIC_URL': ('', 'Public URL', str),
         'FIRST_RUN': (True, 'First Run', bool),
         'CHANNEL': ('', 'Channel name', str),
         'CHANNEL_ID': ('', 'Channel ID', str),
-        'SCOPE_UPDATED_NEEDED': (False, 'Need to update Twitch Scopes', str),
+        'USE_IRC': (False, 'Use IRC for Channel Point Redemption Emotes', bool),
+        'SCOPE_UPDATED_NEEDED': (False, 'Need to update Twitch Scopes', bool),
+        'SCOPES_REFRESHED': (False, 'Have the tokens just been refreshed?', bool),
         'TWITCH_ACCESS_TOKEN': ('', 'Twitch API Access Token', str),
         'TWITCH_REFRESH_TOKEN': ('', 'Twitch API Refresh Token', str),
+        'TWITCH_ACCESS_TOKEN_EXPIRATION': ('', 'Expiration time for Twitch API Access Token', datetime),
         'TWITCH_APP_ACCESS_TOKEN': ('', 'Twitch API App Access Token', str),
+        'TWITCH_APP_ACCESS_TOKEN_EXPIRATION': ('', 'Expiration time for Twitch API App Access Token', datetime),
         'TWITCH_APP_REFRESH_TOKEN': ('', 'Twitch API App Refresh Token', str),
         'STATUS_WEBSOCKET': ('INACTIVE', 'Twitch WS Connection Status', str),
         'STATUS_CHANNEL_UPDATE': ('INACTIVE', 'Channel Update Connection Status', str),
@@ -297,4 +308,5 @@ class Common(Configuration):  # pylint: disable=no-init
         'channel:read:redemptions',
         'channel:read:hype_train',
         'channel_subscriptions',
+        'chat:read'
     ]
