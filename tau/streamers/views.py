@@ -19,17 +19,20 @@ def streamer_page_view(request):
 class StreamerViewSet(viewsets.ModelViewSet):
     queryset = Streamer.objects.all()
     serializer_class = StreamerSerializer
-    pagination_class = None
     permission_classes = (IsAuthenticated, )
 
     @action(detail=True, methods=['get'])
     def streams(self, request, pk=None):
         streamer = self.get_object()
-        streams = streamer.streams.all()
-        paginator = LimitOffsetPagination()
-        paginator.paginate_queryset(streams, request)
+        streams = streamer.streams.all().order_by('-started_at')
+        self.paginator.ordering = '-started_at'
+        page = self.paginate_queryset(streams)
+        if page is not None:
+            serializer = StreamSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
         serializer = StreamSerializer(streams, many=True)
-        return paginator.get_paginated_response(serializer.data)
+        return self.paginator.get_paginated_response(serializer.data)
 
     @action(detail=True, methods=['get'], url_path='streams/latest')
     def latest_stream(self, request, pk=None):
