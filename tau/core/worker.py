@@ -24,6 +24,7 @@ from .utils import (
     setup_ngrok,
     init_webhooks,
     refresh_access_token,
+    teardown_all_acct_webhooks,
     teardown_webhooks,
     get_active_event_sub_ids,
     get_active_streamer_sub_ids
@@ -52,8 +53,15 @@ class Worker():
             refresh_access_token()  # refresh the access token
             self.token_refreshed = True
             print('     [Access tokens refreshed]')
-            teardown_webhooks(self.tau_token)
-            print('     [Old WebHooks torn down]')
+            if not config.RESET_ALL_WEBHOOKS:
+                
+                teardown_webhooks(self.tau_token)
+                print('     [Old WebHooks torn down]')
+            else:
+                print('     [Tearing down all webhooks]')
+                teardown_webhooks(self.tau_token)
+                teardown_all_acct_webhooks()
+                config.RESET_ALL_WEBHOOKS = False
             self.active_event_sub_ids, self.active_streamer_sub_ids = init_webhooks(self.public_url, self.tau_token)
             print('     [New WebHooks Initialized]')
             update_all_streamers()
@@ -138,6 +146,12 @@ class Worker():
             if refresh_webhooks or refreshed_ngrok:
                 await database_sync_to_async(self.setup_webhooks)()
                 refresh_webhooks = False
+            
+            force_refresh_webhooks = await database_sync_to_async(self.lookup_setting)('FORCE_WEBHOOK_REFRESH')
+
+            if force_refresh_webhooks:
+                await database_sync_to_async(self.setup_webhooks)()
+                await database_sync_to_async(self.set_setting)('FORCE_WEBHOOK_REFRESH', False)
 
             await asyncio.sleep(self.wh_delay)
 
