@@ -12,7 +12,7 @@ ENV PYTHONUNBUFFERED=1 PYTHONHASHSEED=random \
     PYTHONDONTWRITEBYTECODE=1 PIP_NO_CACHE_DIR=1
     
 # Install git CLI
-RUN apt-get update && apt-get install git && apt-get clean all
+RUN apt-get update && apt-get install -y git && apt-get clean all
 
 # Install supervisord (supervisor-stdout is not py3 compatible in pypi)
 RUN pip install supervisor git+https://github.com/coderanger/supervisor-stdout
