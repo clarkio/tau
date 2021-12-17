@@ -1,4 +1,4 @@
-# build stage
+# Build stage
 FROM node:16 as build-stage
 WORKDIR /app
 COPY ./tau-dashboard/package*.json ./
@@ -6,12 +6,15 @@ RUN npm install
 COPY ./tau-dashboard /app
 RUN npm run build
 
-# prododuction stage
+# Prododuction stage
 FROM python:3.9-slim as prod-stage
 ENV PYTHONUNBUFFERED=1 PYTHONHASHSEED=random \
     PYTHONDONTWRITEBYTECODE=1 PIP_NO_CACHE_DIR=1
+    
+# Install git CLI
+RUN apt-get update && apt-get install git && apt-get clean all
 
-# install supervisord (supervisor-stdout is not py3 compatible in pypi)
+# Install supervisord (supervisor-stdout is not py3 compatible in pypi)
 RUN pip install supervisor git+https://github.com/coderanger/supervisor-stdout
 
 # Sets work directory to /code
