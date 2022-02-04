@@ -16,7 +16,7 @@
     "primevue": "^3.5.1",
     "prismjs": "^1.25.0",
     "rxjs": "^6.6.7",
-    "vue": "^3.2.22",
+    "vue": "^3.2.26",
     "vue-prism-component": "^2.0.0",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0",
