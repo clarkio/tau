@@ -7,7 +7,7 @@ COPY ./tau-dashboard /app
 RUN npm run build
 
 # Prododuction stage
-FROM python:3.8 as prod-stage
+FROM python:3.9.5 as prod-stage
 ENV PYTHONUNBUFFERED=1 PYTHONHASHSEED=random \
     PYTHONDONTWRITEBYTECODE=1 PIP_NO_CACHE_DIR=1
     
