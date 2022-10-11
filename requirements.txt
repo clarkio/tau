@@ -53,7 +53,7 @@ django-constance[database]==2.8.0
 django-extensions==3.1.0
 
 # Websockets
-websockets==8.1
+websockets==9.1
 
 django-cors-headers==3.7.0
 
