@@ -46,7 +46,7 @@ def get_type_dict(soup, id):
                 'description': cols[2].text.strip(),
                 'type': cols[1].text.strip(),
             }
-        
+
     return data
 
 
@@ -121,7 +121,7 @@ for row in sub_rows:
         if cols[0].text.strip() == 'event':
             event_id = cols[1].find('a')['href'].split('#')[1]
             break
-    
+
     if event_id is not None:
         event_type = {
             '$schema': 'https://json-schema.org/draft/2020-12/schema',
@@ -134,7 +134,7 @@ for row in sub_rows:
         }
     else:
         event_type = None
-    
+
     conditions_h3 = h3_ele.findNext('h3').findNext('h3')
     conditions_tbody = conditions_h3.findNext('table').find('tbody')
     condition_id = None
@@ -143,7 +143,7 @@ for row in sub_rows:
         if cols[0].text.strip() == 'condition':
             condition_id = cols[1].find('a')['href'].split('#')[1]
             break
-    
+
     if condition_id is not None:
         condition = {
             '$schema': 'https://json-schema.org/draft/2020-12/schema',
