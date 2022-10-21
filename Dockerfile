@@ -10,7 +10,7 @@ RUN npm run build
 FROM python:3.8 as prod-stage
 ENV PYTHONUNBUFFERED=1 PYTHONHASHSEED=random \
     PYTHONDONTWRITEBYTECODE=1 PIP_NO_CACHE_DIR=1
-    
+
 # Install git CLI
 RUN apt-get update && apt-get install -y git && apt-get clean all
 
