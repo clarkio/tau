@@ -16,7 +16,7 @@ def main():
     addr = os.environ.get("INT_SERVER_ADDR", "0.0.0.0")
     runserver.default_port = port
     runserver.default_addr = addr
-    
+
     try:
         from configurations.management import execute_from_command_line
     except ImportError:
