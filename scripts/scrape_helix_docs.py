@@ -42,7 +42,7 @@ for doc in doc_elems[1:]:
         endpoint = endpoint[0].split('helix/')[1].split('?')[0]
     if "entitlements" in endpoint:
         continue
-    
+
     if token.lower() == 'app access token':
         token = 'AppAccess'
     else:
