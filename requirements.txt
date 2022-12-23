@@ -63,3 +63,4 @@ bs4==0.0.1
 
 # Formatting
 autopep8==1.6.0
+setuptools>=65.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
